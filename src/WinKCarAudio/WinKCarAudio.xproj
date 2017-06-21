@@ -14,6 +14,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
+    <ApplicationInsightsResourceId>/subscriptions/9e070006-3a08-4dd6-8543-3ba2907dfd8f/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/WinKCarAudio</ApplicationInsightsResourceId>
   </PropertyGroup>
   <ItemGroup>
     <DnxInvisibleContent Include="bower.json" />
