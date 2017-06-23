@@ -1,0 +1,149 @@
+﻿@model WinKCarAudio.Models.AssetViewModels.AssetIndexData
+
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+    .img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-inner > .item > img, .carousel-inner > .item > a > img {
+        width: 350px;
+        height: 280px;
+    }
+</style>
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/css/main.css" rel="stylesheet">
+    <link href="~/css/prettyPhoto.css" rel="stylesheet">
+</head><!--/head-->
+<div class="container spaceUnderLogo">
+    <div class="row">
+        <!-- ==== Begin left-bar ==== -->
+        <div class="col-md-3">
+            @{
+                if (Model.Assets.Count() != 0)
+                {
+                        <h2>ASSETS</h2>
+                }
+
+            }
+            <!-- Begin create action ==== -->
+            @{if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="list-unstyled">
+                        <li><a asp-action="Create">Create New Asset</a></li>
+                    </ul>
+                }
+            }
+            <!-- End of Create action === -->
+            <!-- === Begin search form === -->
+            <form asp-controller="Assets" asp-action="Index" method="get">
+                <input class="form-control" type="text" name="SearchString" placeholder="Search">
+                <div class="sort-by">
+                    <h4>Sort by</h4>
+                    Most recent : <input type="checkbox" name="recent" value=true><br>
+                    Featured Item : <input type="checkbox" name="featuredItem" value=true><br>
+                    <input type="submit" value="Filter" />
+                </div>
+                <div class="left-sidebar">
+                    <h2>Category</h2>
+                    <div class="panel-group category-products" id="accordian">
+                        <!--category-productsr-->
+                        <div class="panel panel-default">
+                            @foreach (var maincategory in Model.Categories)
+                            {
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordian" href="#@maincategory.CategoryId">
+                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                            @maincategory.CategoryName
+                                        </a>
+                                    </h4>
+                                </div>
+                            }
+                        </div>
+                    </div><!--/category-products-->
+                    <h2>Make</h2>
+                    <div class="panel-group category-products" id="accordian">
+                        <!--make-productsr-->
+                        <div class="panel panel-default">
+                            @foreach (var make in Model.Makes)
+                            {
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-parent="#accordian" href="@Url.Action("Index", "Assets")?Makeid=@make.MakeId">
+                                            @make.Name
+                                        </a>
+                                    </h4>
+                                </div>
+                            }
+                        </div>
+                    </div><!--/category-products-->
+                </div>
+            </form>
+            <!-- === End of search form === -->
+        </div>
+        <!-- ==== End left-bar ==== -->
+        <!-- Begin right-bar === -->
+        <div class="col-md-9">
+            <ul id="all-assets" class="row list-unstyled">
+                @foreach (var item in Model.Assets)
+                {
+                    <li id="asset-@item.assetID" class="col-sm-6 col-md-4 single-asset margin-bottom-30">
+                        <!-- Begin single-asset-wrapper -->
+                        <div class="single-asset-container">
+                            @if (@item.ImageGallery != null)
+                            {
+                                @*Show only the first image in gallery*@
+                                @if (@item.ImageGallery.Images.Any(e => e.ImageGalleryId == item.ImageGalleryId))
+                                {
+                                    <div class="asset-image-container">
+                                        <a asp-action="Details" asp-route-id="@item.assetID" class="">
+                                            <div class="imageItem">
+                                                <img src="@item.ImageGallery.Images.First().FileLink" alt="@item.name" style="width:100%" class="img-responsive resize" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="asset-image-container">
+                                        <a asp-action="Details" asp-route-id="@item.assetID" class="">
+                                            <img src="~/images/preview-not-available.jpg" alt="No asset image"
+                                                 class="img-responsive" />
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="asset-image-container">
+                                    <a asp-action="Details" asp-route-id="@item.assetID" class="">
+                                        <img src="~/images/preview-not-available.jpg" alt="No asset image"
+                                             class="img-responsive" />
+                                    </a>
+                                </div>
+                            }
+                            <div class="asset-summary-container">
+                                <h4>
+                                    <a id="@item.name" asp-action="Details" asp-route-id="@item.assetID" class="">
+                                        @Html.DisplayFor(modelItem => item.name)
+                                    </a>
+                                </h4>
+                                else if (item.price > 0)
+                                {
+                                    <p>$@Html.DisplayFor(modelItem => item.price)</p>
+                                }
+                            </div>
+                        </div><!-- End single-asset-wrapper -->
+                    </li>
+
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.single-asset-container').matchHeight();
+    });
+</script>
