@@ -1,0 +1,138 @@
+@model WinKCarAudio.Models.AssetViewModels.Asset
+@{
+    ViewData["Title"] = "Create";
+}
+<style>
+    .cropit-preview {
+        background-color: #f8f8f8;
+        background-size: cover;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin-top: 7px;
+        width: 250px;
+        height: 250px;
+    }
+
+    .cropit-preview-image-container {
+        cursor: move;
+    }
+
+    .image-size-label {
+        margin-top: 10px;
+    }
+
+    input, .export {
+        display: block;
+    }
+</style>
+
+@* Set the URL variable here since Razor syntax can't be included in JS files*@
+<script>
+    $(function () {
+        $('.image-editor').cropit({
+            imageState: {
+                src: '',
+            },
+        });
+        $('.rotate-cw').click(function () {
+            $('.image-editor').cropit('rotateCW');
+        });
+        $('.rotate-ccw').click(function () {
+            $('.image-editor').cropit('rotateCCW');
+        });
+        $('.export').click(function () {
+            var imageData = $('.image-editor').cropit('export');
+            console.log(imageData);
+        });
+    });
+</script>
+<div class="spaceUnderLogo">
+    <h1>Add Asset</h1>
+    <form asp-action="Create" enctype="multipart/form-data" autocomplete="off">
+        <h2>Asset Information</h2>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <!-- Begin left-bar -->
+            <div class="col-md-6">
+                <h3>Basic Information</h3>
+                <div class="form-group">
+                    <label asp-for="name" class="">Asset Name *</label>
+                    <input asp-for="name" class="form-control" />
+                    <span asp-validation-for="name" class="text-danger" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Make" class="" id="Makeinput">Make *</label>
+                    @Html.DropDownList(
+                    "Makes",
+                    (SelectList)ViewBag.Makes,
+                    "--- Select a make ---",
+                    new { @class = "form-control", required = "required" }
+                    )
+                    <span asp-validation-for="Make" class="text-danger" />
+                </div>
+                <div class="form-group" id="mainCategoryContainer">
+                    <label asp-for="AssetCategories" class="">Category *</label>
+                    @Html.DropDownList(
+                    "AssetCategories",
+                    (SelectList)ViewBag.AssetCategories,
+                    "--- Select a category ---",
+                    new { @class = "form-control", required = "required" }
+                    )
+                    <span asp-validation-for="AssetCategories" class="text-danger" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="description" class=""></label>
+                    <textarea asp-for="description" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="description" class="text-danger" />
+                </div>
+                <div id="IsForSale" class="asset-rates">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="price" class=""> Sale Price *</label>
+                                <input asp-for="price" class="form-control" />
+                                <span asp-validation-for="price" class="text-danger" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="form-group">
+                        <div class="image-editor">
+                            <input type="file" name="AssetThumbnail" class="cropit-image-input">
+                            <div class="cropit-preview"></div>
+                            <div class="image-size-label">
+                                Resize image
+                            </div>
+                            <input type="range" class="cropit-image-zoom-input">
+                            <button class="rotate-ccw">Rotate counterclockwise</button>
+                            <button class="rotate-cw">Rotate clockwise</button>
+
+                            <button class="export">Export</button>
+                        </div>
+
+                        <label class="">Upload your images</label>
+                        <input type="file" name="AssetImages" multiple />
+                    </div>*@
+                <h3>Image Gallery</h3>
+                <div class="form-group">
+                    <label class="">Upload Your Images</label>
+                    <input type="file" name="AssetImages" multiple />
+                </div>
+            </div><!-- End left-bar -->
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
